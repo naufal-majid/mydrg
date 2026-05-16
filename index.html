@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>myDrg — Eau de Parfum | A Collaboration with Mykonos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-0: #060103;
+    --bg-1: #0d0306;
+    --bg-2: #19060a;
+    --crimson: #c10a1a;
+    --wine: #5a0712;
+    --blood: #8b0a18;
+    --ember: #ff2a3a;
+    --ash: #b9a6a8;
+    --bone: #efe3df;
+    --gold: #c9a96a;
+    --serif: 'Cormorant Garamond', 'Times New Roman', serif;
+    --sans: 'Inter', system-ui, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-0);
+    color: var(--bone);
+    font-family: var(--sans);
+    font-weight: 300;
+    overflow-x: hidden;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- LOADER ---------- */
+  .loader {
+    position: fixed; inset: 0;
+    background: radial-gradient(circle at 50% 50%, #1a0408 0%, #000 70%);
+    z-index: 10000;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    transition: opacity 1.2s ease, visibility 1.2s ease;
+  }
+  .loader.hidden { opacity: 0; visibility: hidden; }
+  .loader-mark {
+    font-family: var(--serif);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    letter-spacing: 0.3em;
+    color: var(--bone);
+    position: relative;
+    animation: pulseGlow 2.4s ease-in-out infinite;
+  }
+  .loader-bar {
+    margin-top: 2rem;
+    width: 180px; height: 1px;
+    background: rgba(255,255,255,0.1);
+    overflow: hidden;
+    position: relative;
+  }
+  .loader-bar::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, var(--crimson), transparent);
+    animation: scan 1.6s ease-in-out infinite;
+  }
+  @keyframes scan { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+  @keyframes pulseGlow {
+    0%,100% { text-shadow: 0 0 20px rgba(193,10,26,0.3); }
+    50% { text-shadow: 0 0 50px rgba(193,10,26,0.9), 0 0 80px rgba(193,10,26,0.4); }
+  }
+
+  /* ---------- NAV ---------- */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.5rem 4vw;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    background: rgba(6,1,3,0.35);
+    border-bottom: 1px solid rgba(193,10,26,0.08);
+    transition: background 0.4s ease;
+  }
+  nav.scrolled { background: rgba(6,1,3,0.85); }
+  .logo {
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    color: var(--bone);
+    text-transform: uppercase;
+  }
+  .logo span { color: var(--crimson); }
+  .nav-links {
+    display: flex; gap: 2.5rem; list-style: none;
+  }
+  .nav-links a {
+    color: var(--bone);
+    text-decoration: none;
+    font-size: 0.78rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 400;
+    opacity: 0.75;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; left: 0; bottom: -6px;
+    width: 0; height: 1px;
+    background: var(--crimson);
+    transition: width 0.4s ease;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--bone); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-cta {
+    padding: 0.6rem 1.4rem;
+    border: 1px solid rgba(255,255,255,0.2);
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--bone);
+    cursor: pointer;
+    transition: all 0.4s ease;
+  }
+  .nav-cta:hover {
+    background: var(--crimson);
+    border-color: var(--crimson);
+    box-shadow: 0 0 30px rgba(193,10,26,0.5);
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    min-height: 100vh;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at 50% 40%, rgba(139,10,24,0.35) 0%, transparent 55%),
+      radial-gradient(ellipse at 20% 80%, rgba(90,7,18,0.4) 0%, transparent 60%),
+      linear-gradient(180deg, #000 0%, #0d0306 50%, #060103 100%);
+  }
+  .smoke {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .smoke-particle {
+    position: absolute;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(193,10,26,0.18) 0%, transparent 70%);
+    filter: blur(40px);
+    mix-blend-mode: screen;
+    animation: drift 18s linear infinite;
+  }
+  @keyframes drift {
+    0%   { transform: translate(0,0) scale(1); opacity: 0; }
+    20%  { opacity: 0.8; }
+    80%  { opacity: 0.6; }
+    100% { transform: translate(80px, -120px) scale(1.4); opacity: 0; }
+  }
+  .vignette {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.85) 100%);
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 5;
+    text-align: center;
+    padding: 8rem 2rem 4rem;
+    max-width: 1200px;
+  }
+  .hero-eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.6em;
+    text-transform: uppercase;
+    color: var(--crimson);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 1.2s ease 0.4s forwards;
+  }
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(3.5rem, 11vw, 9rem);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--bone);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 1.4s ease 0.7s forwards;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--crimson);
+    text-shadow: 0 0 60px rgba(193,10,26,0.6);
+  }
+  .hero-sub {
+    font-size: 0.9rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    opacity: 0;
+    color: var(--ash);
+    margin-bottom: 3rem;
+    animation: fadeUp 1.2s ease 1s forwards;
+  }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 1rem;
+    padding: 1.1rem 2.4rem;
+    background: transparent;
+    color: var(--bone);
+    border: 1px solid var(--crimson);
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeUp 1.2s ease 1.3s forwards;
+    transition: color 0.4s ease;
+  }
+  .hero-cta::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--crimson);
+    transform: translateX(-101%);
+    transition: transform 0.5s cubic-bezier(0.77,0,0.175,1);
+    z-index: -1;
+  }
+  .hero-cta:hover::before { transform: translateX(0); }
+  .hero-cta:hover { box-shadow: 0 0 40px rgba(193,10,26,0.6); }
+  .hero-cta svg { width: 14px; height: 14px; transition: transform 0.4s; }
+  .hero-cta:hover svg { transform: translateX(6px); }
+
+  .bottle-wrap {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    width: clamp(340px, 55vw, 720px);
+    pointer-events: none;
+    filter: drop-shadow(0 30px 100px rgba(193,10,26,0.6));
+    animation: floatBottle 7s ease-in-out infinite;
+    mix-blend-mode: screen;
+  }
+  @keyframes floatBottle {
+    0%,100% { transform: translate(-50%,-50%); }
+    50% { transform: translate(-50%, calc(-50% - 18px)); }
+  }
+  .bottle-img {
+    width: 100%; height: auto; display: block;
+    -webkit-mask-image: radial-gradient(ellipse 60% 70% at 50% 50%, #000 55%, transparent 90%);
+            mask-image: radial-gradient(ellipse 60% 70% at 50% 50%, #000 55%, transparent 90%);
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 2.5rem; left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    font-size: 0.65rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--ash);
+    opacity: 0.5;
+  }
+  .hero-scroll::after {
+    content: ''; display: block;
+    width: 1px; height: 40px;
+    background: linear-gradient(180deg, var(--crimson), transparent);
+    margin: 1rem auto 0;
+    animation: pulseLine 2s ease-in-out infinite;
+  }
+  @keyframes pulseLine {
+    0%,100% { opacity: 0.3; transform: scaleY(0.6); }
+    50% { opacity: 1; transform: scaleY(1); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ---------- SECTION BASE ---------- */
+  section { position: relative; padding: 10rem 6vw; overflow: hidden; }
+  .eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.55em;
+    text-transform: uppercase;
+    color: var(--crimson);
+    margin-bottom: 1.5rem;
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(2.5rem, 5.5vw, 4.8rem);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    margin-bottom: 2rem;
+  }
+  .section-title em { font-style: italic; color: var(--crimson); }
+
+  .reveal { opacity: 0; transform: translateY(50px); transition: opacity 1.2s ease, transform 1.2s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* ---------- STORY ---------- */
+  .story {
+    background:
+      radial-gradient(ellipse at 80% 30%, rgba(139,10,24,0.18) 0%, transparent 50%),
+      linear-gradient(180deg, #060103, #0a0205);
+  }
+  .story-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+    max-width: 1400px; margin: 0 auto;
+  }
+  .story-image {
+    position: relative;
+    aspect-ratio: 3/4;
+    border: 1px solid rgba(193,10,26,0.25);
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 60px rgba(193,10,26,0.2);
+  }
+  .story-image img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 8s ease;
+    filter: contrast(1.05) saturate(1.1);
+  }
+  .story-image:hover img { transform: scale(1.05); }
+  .story-image::after {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 100%, rgba(0,0,0,0.6) 0%, transparent 60%),
+      linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.5));
+    pointer-events: none;
+  }
+  .story-text p {
+    font-size: 1.05rem;
+    color: var(--ash);
+    margin-bottom: 1.5rem;
+    max-width: 30rem;
+  }
+  .story-quote {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.5rem;
+    color: var(--bone);
+    margin: 2.5rem 0 1rem;
+    padding-left: 1.5rem;
+    border-left: 2px solid var(--crimson);
+    line-height: 1.4;
+  }
+  .story-author {
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--crimson);
+  }
+
+  /* ---------- FRAGRANCES ---------- */
+  .fragrances {
+    background: linear-gradient(180deg, #060103 0%, #14030a 50%, #060103 100%);
+  }
+  .fragrances-header {
+    text-align: center;
+    max-width: 700px; margin: 0 auto 6rem;
+  }
+  .frag-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2rem;
+    max-width: 1400px; margin: 0 auto;
+  }
+  .frag-card {
+    position: relative;
+    aspect-ratio: 3/4;
+    background: linear-gradient(160deg, rgba(20,3,10,0.9), rgba(6,1,3,0.95));
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 2.5rem 2rem;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.6s cubic-bezier(0.23,1,0.32,1), border-color 0.6s;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .frag-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(193,10,26,0.3) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  .frag-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(193,10,26,0.5);
+    box-shadow: 0 30px 80px rgba(193,10,26,0.25);
+  }
+  .frag-card:hover::before { opacity: 1; }
+  .frag-num {
+    font-family: var(--serif);
+    font-size: 0.9rem;
+    color: var(--crimson);
+    letter-spacing: 0.4em;
+    position: relative; z-index: 2;
+  }
+  .frag-bottle {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0.7;
+    transition: transform 0.8s ease, opacity 0.5s;
+    z-index: 0;
+    filter: contrast(1.1) saturate(1.15);
+  }
+  .frag-card::after {
+    content: ''; position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(6,1,3,0.3) 0%, rgba(6,1,3,0.5) 50%, rgba(6,1,3,0.92) 100%);
+    z-index: 1;
+    pointer-events: none;
+    transition: background 0.5s ease;
+  }
+  .frag-card:hover .frag-bottle {
+    transform: scale(1.08);
+    opacity: 0.85;
+  }
+  .frag-card:hover::after {
+    background:
+      linear-gradient(180deg, rgba(6,1,3,0.15) 0%, rgba(6,1,3,0.4) 40%, rgba(6,1,3,0.95) 100%);
+  }
+  .frag-num, .frag-body { z-index: 2; }
+  .frag-body {
+    position: relative; z-index: 2;
+  }
+  .frag-name {
+    font-family: var(--serif);
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+  }
+  .frag-name em { font-style: italic; color: var(--crimson); }
+  .frag-type {
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--ash);
+    margin-bottom: 1rem;
+  }
+  .frag-notes {
+    list-style: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.6s ease, opacity 0.4s ease 0.1s;
+    opacity: 0;
+  }
+  .frag-card:hover .frag-notes { max-height: 200px; opacity: 1; }
+  .frag-notes li {
+    font-size: 0.78rem;
+    color: var(--ash);
+    padding: 0.25rem 0;
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .frag-price {
+    margin-top: 1rem;
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    color: var(--bone);
+  }
+
+  /* ---------- EXPERIENCE ---------- */
+  .experience {
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(139,10,24,0.5) 0%, transparent 50%),
+      linear-gradient(180deg, #14030a 0%, #2b050e 50%, #14030a 100%);
+  }
+  .exp-header {
+    text-align: center;
+    max-width: 700px; margin: 0 auto 6rem;
+  }
+  .timeline {
+    max-width: 900px; margin: 0 auto;
+    position: relative;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, var(--crimson), transparent);
+  }
+  .tl-item {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 3rem;
+    margin-bottom: 5rem;
+  }
+  .tl-item:last-child { margin-bottom: 0; }
+  .tl-content {
+    padding: 1.5rem 0;
+  }
+  .tl-item:nth-child(even) .tl-content:first-child { visibility: hidden; }
+  .tl-item:nth-child(odd) .tl-content:last-child { visibility: hidden; }
+  .tl-stage {
+    font-family: var(--serif);
+    font-size: 0.85rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--crimson);
+    margin-bottom: 0.5rem;
+  }
+  .tl-title {
+    font-family: var(--serif);
+    font-size: 1.8rem;
+    margin-bottom: 0.6rem;
+  }
+  .tl-desc {
+    color: var(--ash);
+    font-size: 0.95rem;
+    max-width: 22rem;
+  }
+  .tl-item:nth-child(odd) .tl-content:first-child { text-align: right; }
+  .tl-item:nth-child(odd) .tl-desc { margin-left: auto; }
+  .tl-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--crimson);
+    box-shadow: 0 0 30px var(--crimson), 0 0 60px rgba(193,10,26,0.5);
+    position: relative;
+    flex-shrink: 0;
+  }
+  .tl-dot::after {
+    content: ''; position: absolute; inset: -6px;
+    border: 1px solid rgba(193,10,26,0.4);
+    border-radius: 50%;
+    animation: ripple 2.5s ease-out infinite;
+  }
+  @keyframes ripple {
+    0% { transform: scale(0.8); opacity: 1; }
+    100% { transform: scale(2.2); opacity: 0; }
+  }
+
+  /* ---------- TESTIMONIALS ---------- */
+  .testimonials {
+    background: linear-gradient(180deg, #14030a 0%, #060103 100%);
+  }
+  .testimonials-header {
+    text-align: center;
+    margin-bottom: 5rem;
+  }
+  .test-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1300px; margin: 0 auto;
+  }
+  .test-card {
+    padding: 2.5rem;
+    background: rgba(255,255,255,0.02);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.07);
+    position: relative;
+    transition: all 0.5s ease;
+  }
+  .test-card::before {
+    content: ''; position: absolute; inset: 0;
+    border: 1px solid transparent;
+    background: linear-gradient(135deg, rgba(193,10,26,0.5), transparent 50%, rgba(193,10,26,0.3)) border-box;
+    -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+  .test-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 50px rgba(193,10,26,0.25);
+  }
+  .test-card:hover::before { opacity: 1; }
+  .test-stars {
+    color: var(--crimson);
+    margin-bottom: 1rem;
+    letter-spacing: 0.2em;
+  }
+  .test-quote {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    font-style: italic;
+    color: var(--bone);
+    line-height: 1.5;
+    margin-bottom: 2rem;
+  }
+  .test-author {
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .test-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--wine), var(--crimson));
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif);
+    font-weight: 600;
+    color: var(--bone);
+  }
+  .test-name { font-size: 0.9rem; color: var(--bone); }
+  .test-role { font-size: 0.72rem; letter-spacing: 0.2em; color: var(--ash); text-transform: uppercase; }
+
+  /* ---------- CTA ---------- */
+  .cta {
+    text-align: center;
+    position: relative;
+    background: #060103;
+    padding: 12rem 6vw;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .cta::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url('images/3.jpeg') center/cover no-repeat;
+    opacity: 0.35;
+    filter: saturate(0.7) contrast(1.1) hue-rotate(-15deg);
+    z-index: -2;
+  }
+  .cta::after {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at center, rgba(193,10,26,0.35) 0%, transparent 60%),
+      linear-gradient(180deg, rgba(6,1,3,0.85), rgba(20,3,10,0.95));
+    z-index: -1;
+  }
+  .cta-quote {
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 5vw, 4.5rem);
+    font-style: italic;
+    line-height: 1.15;
+    max-width: 1000px; margin: 0 auto 3rem;
+    color: var(--bone);
+    letter-spacing: -0.01em;
+  }
+  .cta-quote em { color: var(--crimson); text-shadow: 0 0 40px rgba(193,10,26,0.5); }
+  .cta-sub {
+    font-size: 0.85rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--ash);
+    margin-bottom: 3rem;
+  }
+  .cta-btn {
+    display: inline-block;
+    padding: 1.4rem 3rem;
+    background: var(--crimson);
+    color: var(--bone);
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    border: 1px solid var(--crimson);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-btn:hover {
+    background: transparent;
+    box-shadow: 0 0 60px rgba(193,10,26,0.7), inset 0 0 40px rgba(193,10,26,0.2);
+    letter-spacing: 0.45em;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    padding: 4rem 6vw 2rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    background: #000;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 4rem;
+    max-width: 1400px; margin: 0 auto 3rem;
+  }
+  .footer-brand p {
+    color: var(--ash);
+    font-size: 0.85rem;
+    max-width: 22rem;
+    margin-top: 1rem;
+  }
+  .footer-col h4 {
+    font-family: var(--serif);
+    font-size: 0.85rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--crimson);
+    margin-bottom: 1.2rem;
+    font-weight: 500;
+  }
+  .footer-col a {
+    display: block;
+    color: var(--ash);
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin-bottom: 0.6rem;
+    transition: color 0.3s ease;
+  }
+  .footer-col a:hover { color: var(--bone); }
+  .footer-bottom {
+    text-align: center;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(185,166,168,0.4);
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 880px) {
+    .nav-links { display: none; }
+    .story-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .timeline::before { left: 20px; }
+    .tl-item { grid-template-columns: 40px 1fr; gap: 1.5rem; }
+    .tl-item .tl-dot { order: 1; }
+    .tl-item .tl-content:first-child { display: none; }
+    .tl-item:nth-child(odd) .tl-content:last-child { visibility: visible; text-align: left; }
+    .tl-item:nth-child(even) .tl-content:first-child { display: none; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    section { padding: 6rem 6vw; }
+  }
+  @media (max-width: 500px) {
+    .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+    nav { padding: 1rem 5vw; }
+    .nav-cta { padding: 0.5rem 1rem; font-size: 0.65rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Loader -->
+<div class="loader" id="loader">
+  <div class="loader-mark">myDrg</div>
+  <div class="loader-bar"></div>
+</div>
+
+<!-- Nav -->
+<nav id="nav">
+  <div class="logo">my<span>Drg</span></div>
+  <ul class="nav-links">
+    <li><a href="#story">Story</a></li>
+    <li><a href="#fragrances">Fragrances</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#voices">Voices</a></li>
+  </ul>
+  <button class="nav-cta">Shop Now</button>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+  <div class="smoke" id="smoke"></div>
+
+  <div class="bottle-wrap">
+    <img class="bottle-img" src="images/1.jpeg" alt="myDrg perfume bottle" />
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">Eau de Parfum — pour homme</div>
+    <h1 class="hero-title">my<em>Drg</em></h1>
+    <div class="hero-sub">A collaboration with Mykonos</div>
+    <a href="#fragrances" class="hero-cta">
+      Discover the Scent
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+  <div class="hero-scroll">Scroll</div>
+  <div class="vignette"></div>
+</section>
+
+<!-- Story -->
+<section class="story" id="story">
+  <div class="story-grid">
+    <div class="story-image reveal">
+      <img src="images/2.jpeg" alt="myDrg — held in hand" />
+    </div>
+    <div class="story-text reveal">
+      <div class="eyebrow">The Origin</div>
+      <h2 class="section-title">Born of <em>shadow,</em><br/>raised in <em>fire.</em></h2>
+      <p>myDrg is not a fragrance. It is a confession. Distilled from the quiet hours where confidence and mystery dissolve into the same warm air.</p>
+      <p>Three faces. One signature. A scent crafted on the cliffs of Mykonos and finished in the smoke of midnight Paris — for the man who knows that presence is a language without words.</p>
+      <div class="story-quote">"Wear it once, and the room remembers you long after you've left."</div>
+      <div class="story-author">— Drg, Creative Director</div>
+    </div>
+  </div>
+</section>
+
+<!-- Fragrances -->
+<section class="fragrances" id="fragrances">
+  <div class="fragrances-header reveal">
+    <div class="eyebrow">The Collection</div>
+    <h2 class="section-title">Four <em>signatures,</em><br/>one obsession.</h2>
+  </div>
+
+  <div class="frag-grid">
+    <article class="frag-card reveal">
+      <div class="frag-num">01</div>
+      <img class="frag-bottle" src="images/1.jpeg" alt="myDrg Noir" />
+      <div class="frag-body">
+        <h3 class="frag-name">my<em>Drg</em> Noir</h3>
+        <div class="frag-type">Woody · Smoky</div>
+        <ul class="frag-notes">
+          <li>Top — Bergamot, Black Pepper</li>
+          <li>Heart — Oud, Leather</li>
+          <li>Base — Vetiver, Sandalwood</li>
+        </ul>
+        <div class="frag-price">$220</div>
+      </div>
+    </article>
+
+    <article class="frag-card reveal">
+      <div class="frag-num">02</div>
+      <img class="frag-bottle" src="images/4.jpeg" alt="myDrg Sang" />
+      <div class="frag-body">
+        <h3 class="frag-name">my<em>Drg</em> Sang</h3>
+        <div class="frag-type">Spicy · Crimson</div>
+        <ul class="frag-notes">
+          <li>Top — Saffron, Pink Pepper</li>
+          <li>Heart — Rose Absolute, Cinnamon</li>
+          <li>Base — Amber, Tobacco</li>
+        </ul>
+        <div class="frag-price">$240</div>
+      </div>
+    </article>
+
+    <article class="frag-card reveal">
+      <div class="frag-num">03</div>
+      <img class="frag-bottle" src="images/2.jpeg" alt="myDrg Mykonos" />
+      <div class="frag-body">
+        <h3 class="frag-name">my<em>Drg</em> Mykonos</h3>
+        <div class="frag-type">Sensual · Marine</div>
+        <ul class="frag-notes">
+          <li>Top — Sea Salt, Cardamom</li>
+          <li>Heart — Iris, Fig</li>
+          <li>Base — Musk, Driftwood</li>
+        </ul>
+        <div class="frag-price">$260</div>
+      </div>
+    </article>
+
+    <article class="frag-card reveal">
+      <div class="frag-num">04</div>
+      <img class="frag-bottle" src="images/3.jpeg" alt="myDrg Nuit" />
+      <div class="frag-body">
+        <h3 class="frag-name">my<em>Drg</em> Nuit</h3>
+        <div class="frag-type">Night · Hypnotic</div>
+        <ul class="frag-notes">
+          <li>Top — Black Plum, Bitter Orange</li>
+          <li>Heart — Patchouli, Jasmine</li>
+          <li>Base — Vanilla, Dark Resin</li>
+        </ul>
+        <div class="frag-price">$280</div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- Experience -->
+<section class="experience" id="experience">
+  <div class="exp-header reveal">
+    <div class="eyebrow">The Journey</div>
+    <h2 class="section-title">A scent <em>unfolds</em> in five movements.</h2>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item reveal">
+      <div class="tl-content">
+        <div class="tl-stage">00:00 — First breath</div>
+        <h3 class="tl-title">The Opening</h3>
+        <p class="tl-desc">Sharp citrus and black pepper. A spark struck against silk.</p>
+      </div>
+      <div class="tl-dot"></div>
+      <div class="tl-content"></div>
+    </div>
+
+    <div class="tl-item reveal">
+      <div class="tl-content"></div>
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <div class="tl-stage">00:08 — Settling in</div>
+        <h3 class="tl-title">The Heart</h3>
+        <p class="tl-desc">Rose absolute folds into oud. The room narrows. The lights dim.</p>
+      </div>
+    </div>
+
+    <div class="tl-item reveal">
+      <div class="tl-content">
+        <div class="tl-stage">00:30 — The dive</div>
+        <h3 class="tl-title">The Base</h3>
+        <p class="tl-desc">Leather, amber, tobacco. Warmth that lingers like a held gaze.</p>
+      </div>
+      <div class="tl-dot"></div>
+      <div class="tl-content"></div>
+    </div>
+
+    <div class="tl-item reveal">
+      <div class="tl-content"></div>
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <div class="tl-stage">02:00 — Memory</div>
+        <h3 class="tl-title">The Trail</h3>
+        <p class="tl-desc">Smoke, sandalwood, vanilla. The scent of a story half-told.</p>
+      </div>
+    </div>
+
+    <div class="tl-item reveal">
+      <div class="tl-content">
+        <div class="tl-stage">06:00 — Skin</div>
+        <h3 class="tl-title">The Imprint</h3>
+        <p class="tl-desc">What remains on your skin is no longer perfume. It is you.</p>
+      </div>
+      <div class="tl-dot"></div>
+      <div class="tl-content"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials" id="voices">
+  <div class="testimonials-header reveal">
+    <div class="eyebrow">Voices</div>
+    <h2 class="section-title">What they <em>whisper.</em></h2>
+  </div>
+
+  <div class="test-grid">
+    <div class="test-card reveal">
+      <div class="test-stars">★ ★ ★ ★ ★</div>
+      <p class="test-quote">"It doesn't announce itself. It seduces. Three hours in, strangers asked what I was wearing — and I couldn't quite explain."</p>
+      <div class="test-author">
+        <div class="test-avatar">M</div>
+        <div>
+          <div class="test-name">Marcus L.</div>
+          <div class="test-role">Paris</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="test-card reveal">
+      <div class="test-stars">★ ★ ★ ★ ★</div>
+      <p class="test-quote">"Worth every shadow it casts. myDrg Sang has replaced everything else in my collection. It's the only one I reach for now."</p>
+      <div class="test-author">
+        <div class="test-avatar">A</div>
+        <div>
+          <div class="test-name">Adrien V.</div>
+          <div class="test-role">Milan</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="test-card reveal">
+      <div class="test-stars">★ ★ ★ ★ ★</div>
+      <p class="test-quote">"This is the scent of confidence after midnight. Of leaving the bar with a number you didn't ask for."</p>
+      <div class="test-author">
+        <div class="test-avatar">J</div>
+        <div>
+          <div class="test-name">Julien R.</div>
+          <div class="test-role">Marrakech</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="reveal">
+    <h2 class="cta-quote">A scent does not <em>describe</em> you.<br/>It <em>reveals</em> the man you already are.</h2>
+    <div class="cta-sub">Limited edition · 100ml · pour homme</div>
+    <a href="#" class="cta-btn">Claim Your Bottle</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">my<span>Drg</span></div>
+      <p>A collaboration with Mykonos. Designed in shadow. Composed in silence. Worn unforgettably.</p>
+    </div>
+    <div class="footer-col">
+      <h4>House</h4>
+      <a href="#">About</a>
+      <a href="#">Atelier</a>
+      <a href="#">Press</a>
+    </div>
+    <div class="footer-col">
+      <h4>Boutique</h4>
+      <a href="#">Fragrances</a>
+      <a href="#">Gift Sets</a>
+      <a href="#">Find a Store</a>
+    </div>
+    <div class="footer-col">
+      <h4>Care</h4>
+      <a href="#">Contact</a>
+      <a href="#">Shipping</a>
+      <a href="#">Returns</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 myDrg Parfums — All rights reserved</div>
+</footer>
+
+<script>
+  // Loader
+  window.addEventListener('load', () => {
+    setTimeout(() => document.getElementById('loader').classList.add('hidden'), 1400);
+  });
+
+  // Nav scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Smoke particles
+  const smoke = document.getElementById('smoke');
+  for (let i = 0; i < 14; i++) {
+    const p = document.createElement('div');
+    p.className = 'smoke-particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.top = Math.random() * 100 + '%';
+    p.style.animationDelay = (Math.random() * 18) + 's';
+    p.style.animationDuration = (12 + Math.random() * 14) + 's';
+    p.style.transform = `scale(${0.5 + Math.random() * 1.2})`;
+    smoke.appendChild(p);
+  }
+
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Hero parallax on bottle
+  const bottle = document.querySelector('.bottle-wrap');
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    if (y < window.innerHeight) {
+      bottle.style.transform = `translate(-50%, calc(-50% + ${y * 0.3}px)) scale(${1 - y * 0.0006})`;
+      bottle.style.opacity = Math.max(0, 0.55 - y * 0.0012);
+    }
+  }, { passive: true });
+
+  // Mouse-tilt bottle
+  document.querySelector('.hero').addEventListener('mousemove', (e) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    bottle.style.filter = `drop-shadow(${-x * 60}px ${-y * 40}px 100px rgba(193,10,26,0.7))`;
+  });
+</script>
+
+</body>
+</html>
